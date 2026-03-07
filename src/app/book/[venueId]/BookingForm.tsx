@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
 import { parseISO, format, isWeekend } from 'date-fns'
 import { createBooking } from '@/actions/bookings'
@@ -15,7 +16,13 @@ interface Props {
 }
 
 export function BookingForm({ venue, bookedDates }: Props) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
+  const searchParams = useSearchParams()
+  const initialDate = searchParams.get('date')
+    ? (() => { try { return parseISO(searchParams.get('date')!) } catch { return undefined } })()
+    : undefined
+  const initialGuests = searchParams.get('guests') ?? ''
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate)
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('17:00')
   const [error, setError] = useState<string | null>(null)
@@ -143,6 +150,7 @@ export function BookingForm({ venue, bookedDates }: Props) {
           min={1}
           max={venue.capacity ?? undefined}
           required
+          defaultValue={initialGuests}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
           placeholder="50"
         />

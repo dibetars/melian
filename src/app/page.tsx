@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
+import { HeroBookingWidget } from '@/components/venues/HeroBookingWidget'
 import { CalendarCheck, Users, Star, Shield } from 'lucide-react'
 
 const features = [
@@ -38,6 +39,12 @@ export default async function HomePage() {
       .from('profiles').select('role').eq('id', user.id).single()
     isAdmin = profile?.role === 'admin'
   }
+
+  const { data: venues } = await supabase
+    .from('venues')
+    .select('id, name, capacity')
+    .eq('is_active', true)
+    .order('name')
 
   return (
     <>
@@ -78,7 +85,7 @@ export default async function HomePage() {
               Discover and book stunning venues for weddings, conferences, parties and more.
               Elegance and excellence, every event.
             </p>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link href="/venues">
                 <Button size="lg" className="px-10 text-sm uppercase tracking-widest">
                   Browse Venues
@@ -96,6 +103,8 @@ export default async function HomePage() {
                 </Link>
               )}
             </div>
+
+            <HeroBookingWidget venues={venues ?? []} />
           </div>
         </section>
 
