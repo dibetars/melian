@@ -4,6 +4,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { Button } from '@/components/ui/Button'
 import { HeroBookingWidget } from '@/components/venues/HeroBookingWidget'
+import { GallerySection } from '@/components/home/GallerySection'
 import { CalendarCheck, Users, Star, Shield } from 'lucide-react'
 
 const features = [
@@ -85,25 +86,6 @@ export default async function HomePage() {
               Discover and book stunning venues for weddings, conferences, parties and more.
               Elegance and excellence, every event.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/venues">
-                <Button size="lg" className="px-10 text-sm uppercase tracking-widest">
-                  Browse Venues
-                </Button>
-              </Link>
-              {!user && (
-                <Link href="/auth/register">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 px-10 text-sm uppercase tracking-widest"
-                  >
-                    Create Account
-                  </Button>
-                </Link>
-              )}
-            </div>
-
             <HeroBookingWidget venues={venues ?? []} />
           </div>
         </section>
@@ -137,6 +119,9 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Gallery */}
+        <GallerySection />
 
         {/* CTA band */}
         <section className="bg-brand-gold py-16 text-white">

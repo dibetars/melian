@@ -4,18 +4,18 @@
   --font-sans: var(--font-geist);
   --font-serif: var(--font-playfair);
 
-  --color-brand-green:       #0A4535;
-  --color-brand-green-dark:  #072E24;
-  --color-brand-green-light: #E8F2EE;
-  --color-brand-gold:        #C4973A;
-  --color-brand-gold-dark:   #A07B2C;
-  --color-brand-gold-light:  #FAF3E0;
+  --color-brand-green:       #1D2755;
+  --color-brand-green-dark:  #141B3D;
+  --color-brand-green-light: #ECEEF6;
+  --color-brand-gold:        #ECC356;
+  --color-brand-gold-dark:   #C9A03A;
+  --color-brand-gold-light:  #FDF8E8;
 }
 
 /* Global input / textarea focus */
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):focus,
 textarea:focus {
-  border-color: #0A4535 !important;
-  box-shadow: 0 0 0 3px rgba(10, 69, 53, 0.12) !important;
+  border-color: #1D2755 !important;
+  box-shadow: 0 0 0 3px rgba(29, 39, 85, 0.12) !important;
   outline: none !important;
 }
