@@ -34,12 +34,9 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur shadow-sm">
-      <nav className="mx-auto grid max-w-7xl grid-cols-3 items-center px-4 py-3 sm:px-6 lg:px-8">
-        {/* Left — empty spacer for centered logo */}
-        <div />
-
-        {/* Center — logo */}
-        <Link href="/" className="flex items-center justify-center">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        {/* Left — logo */}
+        <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"
             alt="Melian Event Center"
@@ -56,8 +53,8 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
           />
         </Link>
 
-        {/* Right — actions */}
-        <div className="hidden items-center justify-end gap-4 md:flex">
+        {/* Right — actions (desktop) */}
+        <div className="hidden items-center gap-4 md:flex">
           {user ? (
             <>
               {isAdmin && (
@@ -81,7 +78,7 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
         </div>
 
         {/* Mobile hamburger */}
-        <div className="flex justify-end md:hidden col-start-3">
+        <div className="flex md:hidden">
           <button onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X className="h-6 w-6 text-brand-green" /> : <Menu className="h-6 w-6 text-brand-green" />}
           </button>
@@ -91,7 +88,7 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="border-t border-gray-100 bg-white px-4 pb-5 md:hidden">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 pt-3">
             {user ? (
               <>
                 <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
