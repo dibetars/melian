@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CalendarDays, Building2, CreditCard } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, Building2, CreditCard, Ticket } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -10,6 +10,7 @@ const links = [
   { href: '/admin/bookings', label: 'Bookings', icon: CalendarDays },
   { href: '/admin/venues', label: 'Spaces', icon: Building2 },
   { href: '/admin/payments', label: 'Payments', icon: CreditCard },
+  { href: '/admin/coupons',  label: 'Coupons',  icon: Ticket },
 ]
 
 export function AdminSidebar() {

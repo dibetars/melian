@@ -57,10 +57,11 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
         <div className="hidden items-center gap-4 md:flex">
           {user ? (
             <>
-              {isAdmin && (
+              {isAdmin ? (
                 <Link href="/admin" className={linkCls('/admin')}>Admin</Link>
+              ) : (
+                <Link href="/dashboard" className={linkCls('/dashboard')}>Dashboard</Link>
               )}
-              <Link href="/dashboard" className={linkCls('/dashboard')}>Dashboard</Link>
               <Button variant="outline" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
                 Sign Out
               </Button>
@@ -91,12 +92,13 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
           <div className="flex flex-col gap-2 pt-3">
             {user ? (
               <>
-                <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full text-xs uppercase tracking-widest">Dashboard</Button>
-                </Link>
-                {isAdmin && (
+                {isAdmin ? (
                   <Link href="/admin" onClick={() => setMenuOpen(false)}>
-                    <Button variant="outline" size="sm" className="w-full text-xs uppercase tracking-widest">Admin</Button>
+                    <Button variant="outline" size="sm" className="w-full text-xs uppercase tracking-widest">Admin Panel</Button>
+                  </Link>
+                ) : (
+                  <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full text-xs uppercase tracking-widest">Dashboard</Button>
                   </Link>
                 )}
                 <Button variant="secondary" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
