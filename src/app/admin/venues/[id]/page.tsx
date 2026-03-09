@@ -6,7 +6,7 @@ import { VenueForm } from '../VenueForm'
 import { ToggleVenueButton } from './ToggleVenueButton'
 import { VenueImageUpload } from './VenueImageUpload'
 
-export const metadata: Metadata = { title: 'Edit Venue' }
+export const metadata: Metadata = { title: 'Edit Space' }
 
 interface Props { params: Promise<{ id: string }> }
 

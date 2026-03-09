@@ -43,10 +43,10 @@ export function HeroBookingWidget({ venues }: Props) {
       className="mt-10 w-full rounded-2xl border border-white/20 bg-white/10 p-1 backdrop-blur-md sm:rounded-full"
     >
       <div className="flex flex-col gap-1 sm:flex-row sm:items-stretch">
-        {/* Venue */}
+        {/* Space */}
         <div className="group relative flex flex-1 flex-col rounded-xl bg-white/90 px-4 py-3 transition hover:bg-white sm:rounded-l-full sm:rounded-r-none">
           <label className="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-brand-green">
-            Venue
+            Space
           </label>
           <div className="relative flex items-center">
             <select
@@ -54,7 +54,7 @@ export function HeroBookingWidget({ venues }: Props) {
               onChange={e => setVenueId(e.target.value)}
               className="w-full appearance-none bg-transparent pr-6 text-sm font-medium text-gray-800 focus:outline-none"
             >
-              <option value="">Any venue</option>
+              <option value="">Any space</option>
               {venues.map(v => (
                 <option key={v.id} value={v.id}>
                   {v.name} (up to {v.capacity})

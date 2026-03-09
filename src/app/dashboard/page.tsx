@@ -67,7 +67,7 @@ export default async function DashboardPage() {
         {!bookings || bookings.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 py-12 text-center text-sm text-gray-500">
             No bookings yet.{' '}
-            <Link href="/venues" className="text-brand-gold hover:underline">Browse venues</Link>
+            <Link href="/venues" className="text-brand-gold hover:underline">Book a space</Link>
           </div>
         ) : (
           <div className="space-y-3">

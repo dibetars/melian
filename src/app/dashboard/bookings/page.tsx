@@ -28,7 +28,7 @@ export default async function CustomerBookingsPage() {
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 py-20 text-center">
           <CalendarDays className="mb-3 h-10 w-10 text-gray-300" />
           <p className="text-gray-500">No bookings yet.</p>
-          <Link href="/venues" className="mt-2 text-sm text-brand-gold hover:underline">Browse venues</Link>
+          <Link href="/venues" className="mt-2 text-sm text-brand-gold hover:underline">Book a space</Link>
         </div>
       ) : (
         <div className="space-y-3">

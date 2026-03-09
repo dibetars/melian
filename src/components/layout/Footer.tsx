@@ -13,7 +13,7 @@ export function Footer() {
             © {new Date().getFullYear()} Melian Event Center. All rights reserved.
           </p>
           <div className="flex gap-6 text-xs font-semibold uppercase tracking-widest text-white/60">
-            <Link href="/venues" className="hover:text-brand-gold transition-colors">Venues</Link>
+            <Link href="/venues" className="hover:text-brand-gold transition-colors">Our Spaces</Link>
             <Link href="/auth/login" className="hover:text-brand-gold transition-colors">Login</Link>
           </div>
         </div>

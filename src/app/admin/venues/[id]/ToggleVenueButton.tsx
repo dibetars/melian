@@ -14,7 +14,7 @@ export function ToggleVenueButton({ id, isActive }: { id: string; isActive: bool
     startTransition(async () => {
       const result = await toggleVenueActive(id, isActive)
       if (result.error) toast.error(result.error)
-      else { toast.success(isActive ? 'Venue deactivated.' : 'Venue activated.'); router.refresh() }
+      else { toast.success(isActive ? 'Space deactivated.' : 'Space activated.'); router.refresh() }
     })
   }
 

@@ -46,7 +46,7 @@ export default async function BookingDetailPage({ params }: Props) {
         <CardContent>
           <dl className="grid gap-4 sm:grid-cols-2">
             {[
-              { label: 'Venue', value: booking.venue?.name },
+              { label: 'Space', value: booking.venue?.name },
               { label: 'Date', value: formatDate(booking.event_date) },
               { label: 'Start Time', value: formatTime(booking.start_time) },
               { label: 'End Time', value: formatTime(booking.end_time) },

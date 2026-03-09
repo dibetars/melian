@@ -11,12 +11,12 @@ const features = [
   {
     icon: CalendarCheck,
     title: 'Easy Online Booking',
-    desc: 'Reserve your venue in minutes with real-time availability and instant confirmation.',
+    desc: 'Reserve your space in minutes with real-time availability and instant confirmation.',
   },
   {
     icon: Users,
     title: 'Events of Any Size',
-    desc: 'From intimate gatherings to grand celebrations — we have a venue for every occasion.',
+    desc: 'From intimate gatherings to grand celebrations — we have a space for every occasion.',
   },
   {
     icon: Star,
@@ -79,10 +79,10 @@ export default async function HomePage() {
             </p>
             <h1 className="font-serif text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
               Your Perfect<br />
-              <span className="text-brand-gold">Event Venue</span>
+              <span className="text-brand-gold">Event Space</span>
             </h1>
             <p className="mx-auto mt-6 max-w-lg text-base text-white/70 leading-relaxed">
-              Discover and book stunning venues for weddings, conferences, parties and more.
+              Discover and book our stunning spaces for weddings, conferences, parties and more.
               Elegance and excellence, every event.
             </p>
             <HeroBookingWidget venues={venues ?? []} />
@@ -128,14 +128,14 @@ export default async function HomePage() {
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">Reserve Your Date</p>
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">Ready to Host Your Event?</h2>
             <p className="mt-4 text-white/80">
-              Browse our venues and secure your date today.
+              Browse our spaces and secure your date today.
             </p>
             <Link href="/auth/login" className="mt-8 inline-block">
               <Button
                 size="lg"
                 className="bg-brand-green hover:bg-brand-green-dark px-10 text-sm uppercase tracking-widest"
               >
-                View All Venues
+                View All Spaces
               </Button>
             </Link>
           </div>

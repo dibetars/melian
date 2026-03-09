@@ -22,7 +22,7 @@ export default function PaymentSuccessPage() {
             <Button className="w-full">View My Bookings</Button>
           </Link>
           <Link href="/venues">
-            <Button variant="outline" className="w-full">Browse More Venues</Button>
+            <Button variant="outline" className="w-full">Book Another Event</Button>
           </Link>
         </div>
       </div>

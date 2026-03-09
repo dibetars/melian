@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/Navbar'
 import { BookingForm } from './BookingForm'
 
-export const metadata: Metadata = { title: 'Book Venue' }
+export const metadata: Metadata = { title: 'Book a Space' }
 
 interface Props {
   params: Promise<{ venueId: string }>

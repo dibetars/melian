@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 const links = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/bookings', label: 'Bookings', icon: CalendarDays },
-  { href: '/admin/venues', label: 'Venues', icon: Building2 },
+  { href: '/admin/venues', label: 'Spaces', icon: Building2 },
   { href: '/admin/payments', label: 'Payments', icon: CreditCard },
 ]
 

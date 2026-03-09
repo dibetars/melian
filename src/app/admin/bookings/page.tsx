@@ -50,7 +50,7 @@ export default async function AdminBookingsPage({
         <table className="min-w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50">
             <tr>
-              {['Event', 'Venue', 'Customer', 'Date', 'Amount', 'Status', ''].map((h) => (
+              {['Event', 'Space', 'Customer', 'Date', 'Amount', 'Status', ''].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                   {h}
                 </th>

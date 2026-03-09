@@ -15,7 +15,7 @@ interface NavbarProps {
 }
 
 const leftLinks = [
-  { href: '/venues', label: 'Venues' },
+  { href: '/venues', label: 'Our Spaces' },
 ]
 
 export function Navbar({ user, isAdmin }: NavbarProps) {

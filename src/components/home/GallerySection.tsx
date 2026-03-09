@@ -48,7 +48,7 @@ export function GallerySection() {
             Our Spaces
           </p>
           <h2 className="mt-2 font-serif text-3xl font-bold text-brand-green sm:text-4xl">
-            A Venue for Every Occasion
+            A Space for Every Occasion
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-gray-500">
             From intimate gatherings to grand celebrations — explore the

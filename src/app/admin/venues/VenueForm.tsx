@@ -23,7 +23,7 @@ export function VenueForm({ venue }: { venue?: Venue }) {
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success(venue ? 'Venue updated.' : 'Venue created.')
+        toast.success(venue ? 'Space updated.' : 'Space created.')
         if (!venue) router.push('/admin/venues')
       }
     })
@@ -51,7 +51,7 @@ export function VenueForm({ venue }: { venue?: Venue }) {
     <Card>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {field('name', 'Venue Name', { required: true, defaultValue: venue?.name, placeholder: 'Grand Ballroom' })}
+          {field('name', 'Space Name', { required: true, defaultValue: venue?.name, placeholder: 'Grand Ballroom' })}
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">Description</label>
@@ -83,7 +83,7 @@ export function VenueForm({ venue }: { venue?: Venue }) {
           </div>
 
           <Button type="submit" loading={isPending}>
-            {venue ? 'Save Changes' : 'Create Venue'}
+            {venue ? 'Save Changes' : 'Create Space'}
           </Button>
         </form>
       </CardContent>

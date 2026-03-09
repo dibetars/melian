@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()
   const { data } = await supabase.from('venues').select('name').eq('slug', slug).single()
-  return { title: data?.name ?? 'Venue' }
+  return { title: data?.name ?? 'Space' }
 }
 
 export default async function VenueDetailPage({ params }: Props) {
@@ -151,7 +151,7 @@ export default async function VenueDetailPage({ params }: Props) {
                 </div>
                 <Link href={bookHref} className="mt-6 block">
                   <Button size="lg" className="w-full">
-                    Book This Venue
+                    Book This Space
                   </Button>
                 </Link>
                 <p className="mt-3 text-center text-xs text-gray-400">

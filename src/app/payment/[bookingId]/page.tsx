@@ -62,7 +62,7 @@ export default async function PaymentPage({ params }: Props) {
             <h2 className="mb-3 font-semibold text-gray-900">Booking Summary</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Venue</span>
+                <span className="text-gray-500">Space</span>
                 <span className="font-medium">{booking.venue?.name}</span>
               </div>
               <div className="flex justify-between">

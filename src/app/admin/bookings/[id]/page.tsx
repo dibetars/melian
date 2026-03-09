@@ -39,7 +39,7 @@ export default async function AdminBookingDetailPage({ params }: Props) {
           <CardContent>
             <dl className="space-y-3 text-sm">
               {[
-                ['Venue', booking.venue?.name],
+                ['Space', booking.venue?.name],
                 ['Date', formatDate(booking.event_date)],
                 ['Time', `${formatTime(booking.start_time)} – ${formatTime(booking.end_time)}`],
                 ['Guests', booking.guest_count ?? '—'],

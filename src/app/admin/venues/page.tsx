@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { formatCurrency } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 
-export const metadata: Metadata = { title: 'Admin — Venues' }
+export const metadata: Metadata = { title: 'Admin — Spaces' }
 
 export default async function AdminVenuesPage() {
   const supabase = await createClient()
@@ -19,9 +19,9 @@ export default async function AdminVenuesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Venues</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Spaces</h1>
         <Link href="/admin/venues/new">
-          <Button size="sm"><Plus className="h-4 w-4" /> New Venue</Button>
+          <Button size="sm"><Plus className="h-4 w-4" /> New Space</Button>
         </Link>
       </div>
 
@@ -37,7 +37,7 @@ export default async function AdminVenuesPage() {
           <tbody className="divide-y divide-gray-100">
             {!venues || venues.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-gray-400">No venues yet. Create one!</td>
+                <td colSpan={6} className="py-10 text-center text-gray-400">No spaces yet. Create one!</td>
               </tr>
             ) : (
               venues.map((v) => (
