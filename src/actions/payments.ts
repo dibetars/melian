@@ -1,10 +1,10 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function markOfflinePaid(paymentId: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
 
   const { data: payment, error: fetchError } = await supabase
     .from('payments')
@@ -34,17 +34,25 @@ export async function markOfflinePaid(paymentId: string) {
 }
 
 export async function createOfflinePayment(bookingId: string) {
+  // Use regular client to verify the booking belongs to the current user
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
 
   const { data: booking, error: bookingError } = await supabase
     .from('bookings')
     .select('total_amount, customer_id')
     .eq('id', bookingId)
+    .eq('customer_id', user.id)   // explicit ownership check
     .single()
 
   if (bookingError || !booking) return { error: 'Booking not found' }
 
-  const { data, error } = await supabase
+  // Use admin client for the insert — ownership already verified above
+  const admin = await createAdminClient()
+
+  const { data, error } = await admin
     .from('payments')
     .insert({
       booking_id: bookingId,

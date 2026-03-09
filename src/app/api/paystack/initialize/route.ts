@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { initializeTransaction, generatePaystackRef } from '@/lib/paystack'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -39,8 +36,9 @@ export async function POST(req: NextRequest) {
       metadata: { booking_id: bookingId },
     })
 
-    // Store payment record
-    await supabase.from('payments').upsert({
+    // Use admin client for the upsert — ownership already verified above
+    const admin = await createAdminClient()
+    await admin.from('payments').upsert({
       booking_id: bookingId,
       amount: booking.total_amount,
       method: 'online',
