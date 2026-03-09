@@ -53,7 +53,6 @@ export default async function HomePage() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-brand-green py-28 text-white">
-          {/* Background video — place /public/hero-video.mp4 to activate */}
           <video
             autoPlay
             loop
@@ -61,7 +60,7 @@ export default async function HomePage() {
             playsInline
             className="absolute inset-0 h-full w-full object-cover"
           >
-            <source src="/hero-video.mp4" type="video/mp4" />
+            <source src="/hero-image.mp4" type="video/mp4" />
           </video>
 
           {/* Overlay — keeps text readable over any video */}
@@ -131,7 +130,7 @@ export default async function HomePage() {
             <p className="mt-4 text-white/80">
               Browse our venues and secure your date today.
             </p>
-            <Link href="/venues" className="mt-8 inline-block">
+            <Link href="/auth/login" className="mt-8 inline-block">
               <Button
                 size="lg"
                 className="bg-brand-green hover:bg-brand-green-dark px-10 text-sm uppercase tracking-widest"
