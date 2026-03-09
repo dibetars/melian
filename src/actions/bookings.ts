@@ -27,7 +27,7 @@ export async function createBooking(formData: FormData) {
     .select('*', { count: 'exact', head: true })
     .eq('venue_id', venue_id)
     .eq('event_date', event_date)
-    .neq('status', 'cancelled')
+    .eq('status', 'confirmed')
     .lt('start_time', end_time)
     .gt('end_time', start_time)
 
