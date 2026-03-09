@@ -3,11 +3,13 @@
 import { useState, useTransition } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { DayPicker } from 'react-day-picker'
-import { parseISO, format, isWeekend } from 'date-fns'
+import { parseISO, format } from 'date-fns'
 import { createBooking } from '@/actions/bookings'
+import { validateCoupon, type CouponResult } from '@/actions/coupons'
 import { Button } from '@/components/ui/Button'
 import { formatCurrency } from '@/lib/utils'
 import type { Venue } from '@/types'
+import { Tag, CheckCircle, XCircle } from 'lucide-react'
 import 'react-day-picker/dist/style.css'
 
 interface Props {
@@ -28,6 +30,12 @@ export function BookingForm({ venue, bookedDates }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
+  // Coupon state
+  const [couponInput, setCouponInput] = useState('')
+  const [couponResult, setCouponResult] = useState<CouponResult | null>(null)
+  const [couponError, setCouponError] = useState<string | null>(null)
+  const [isCouponPending, startCouponTransition] = useTransition()
+
   const disabledDays = [
     { before: new Date() },
     ...bookedDates.map((d) => parseISO(d)),
@@ -39,11 +47,35 @@ export function BookingForm({ venue, bookedDates }: Props) {
     return Math.max(0, eh + em / 60 - (sh + sm / 60))
   }
 
-  const totalAmount = () => {
+  const subtotal = () => {
     const hours = hoursDiff()
     if (venue.price_per_hour) return hours * venue.price_per_hour
     if (venue.price_per_day) return venue.price_per_day
     return 0
+  }
+
+  const discount = couponResult?.discountAmount ?? 0
+  const totalAmount = () => Math.max(0, subtotal() - discount)
+
+  function handleApplyCoupon() {
+    const code = couponInput.trim()
+    if (!code) return
+    setCouponError(null)
+    setCouponResult(null)
+    startCouponTransition(async () => {
+      const res = await validateCoupon(code, subtotal())
+      if ('error' in res) {
+        setCouponError(res.error)
+      } else {
+        setCouponResult(res.coupon)
+      }
+    })
+  }
+
+  function handleRemoveCoupon() {
+    setCouponResult(null)
+    setCouponError(null)
+    setCouponInput('')
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -62,6 +94,10 @@ export function BookingForm({ venue, bookedDates }: Props) {
     const formData = new FormData(e.currentTarget)
     formData.set('event_date', format(selectedDate, 'yyyy-MM-dd'))
     formData.set('total_amount', totalAmount().toString())
+    formData.set('discount_amount', discount.toString())
+    if (couponResult) {
+      formData.set('coupon_code', couponResult.code)
+    }
 
     startTransition(async () => {
       const result = await createBooking(formData)
@@ -169,17 +205,99 @@ export function BookingForm({ venue, bookedDates }: Props) {
         />
       </div>
 
+      {/* Coupon code */}
+      <div>
+        <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+          <Tag className="h-3.5 w-3.5 text-brand-gold" />
+          Coupon Code <span className="text-gray-400">(optional)</span>
+        </label>
+
+        {couponResult ? (
+          /* Applied coupon badge */
+          <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-3 py-2.5">
+            <CheckCircle className="h-4 w-4 shrink-0 text-green-600" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-green-700">
+                {couponResult.code} — {couponResult.discountLabel}
+              </p>
+              {couponResult.description && (
+                <p className="text-xs text-green-600">{couponResult.description}</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveCoupon}
+              className="ml-auto shrink-0 text-gray-400 hover:text-red-500 transition-colors"
+              aria-label="Remove coupon"
+            >
+              <XCircle className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+              placeholder="e.g. MELIAN-ABC12"
+              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm uppercase outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleApplyCoupon() } }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleApplyCoupon}
+              loading={isCouponPending}
+              disabled={!couponInput.trim()}
+            >
+              Apply
+            </Button>
+          </div>
+        )}
+
+        {couponError && (
+          <p className="mt-1.5 flex items-center gap-1 text-xs text-red-600">
+            <XCircle className="h-3.5 w-3.5" /> {couponError}
+          </p>
+        )}
+      </div>
+
       {/* Price summary */}
-      {totalAmount() > 0 && (
-        <div className="rounded-lg bg-brand-green-light p-4">
+      {subtotal() > 0 && (
+        <div className="rounded-lg bg-brand-green-light p-4 space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">
               {venue.price_per_hour
                 ? `${hoursDiff().toFixed(1)} hours × ${formatCurrency(venue.price_per_hour!)}`
                 : 'Full day rate'}
             </span>
-            <span className="font-semibold text-brand-green">{formatCurrency(totalAmount())}</span>
+            <span className="font-medium text-gray-700">{formatCurrency(subtotal())}</span>
           </div>
+
+          {couponResult && (
+            <div className="flex justify-between text-sm">
+              <span className="text-green-600">
+                Coupon ({couponResult.discountLabel})
+              </span>
+              <span className="font-medium text-green-600">
+                − {formatCurrency(couponResult.discountAmount)}
+              </span>
+            </div>
+          )}
+
+          {couponResult && (
+            <div className="border-t border-brand-green/20 pt-2 flex justify-between text-sm">
+              <span className="font-semibold text-brand-green">Total</span>
+              <span className="font-bold text-brand-green">{formatCurrency(totalAmount())}</span>
+            </div>
+          )}
+
+          {!couponResult && (
+            <div className="flex justify-between text-sm">
+              <span className="font-semibold text-brand-green">Total</span>
+              <span className="font-bold text-brand-green">{formatCurrency(totalAmount())}</span>
+            </div>
+          )}
         </div>
       )}
 

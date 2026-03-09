@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -20,6 +20,8 @@ export async function createBooking(formData: FormData) {
   const guest_count = Number(formData.get('guest_count'))
   const notes = formData.get('notes') as string
   const total_amount = Number(formData.get('total_amount'))
+  const discount_amount = Number(formData.get('discount_amount') ?? 0)
+  const coupon_code = (formData.get('coupon_code') as string) || null
 
   // Conflict detection
   const { count } = await supabase
@@ -47,11 +49,19 @@ export async function createBooking(formData: FormData) {
       guest_count,
       notes,
       total_amount,
+      discount_amount,
+      coupon_code,
     })
     .select()
     .single()
 
   if (error) return { error: error.message }
+
+  // Increment coupon usage count atomically (fire-and-forget, non-blocking)
+  if (coupon_code) {
+    const admin = await createAdminClient()
+    await admin.rpc('increment_coupon_uses', { p_code: coupon_code })
+  }
 
   redirect(`/payment/${data.id}`)
 }

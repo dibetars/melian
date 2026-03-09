@@ -35,6 +35,12 @@ export default async function AdminDashboardPage() {
 
   const totalRevenue = (revenue ?? []).reduce((sum, p) => sum + Number(p.amount), 0)
 
+  const formatRevenue = (n: number) => {
+    if (n >= 1_000_000) return `₵${(n / 1_000_000).toFixed(1)}M`
+    if (n >= 1_000) return `₵${(n / 1_000).toFixed(1)}k`
+    return `₵${n.toFixed(0)}`
+  }
+
   // Recent bookings (last 7)
   const { data: recentBookings } = await supabase
     .from('bookings')
@@ -83,7 +89,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     { label: 'Total Bookings',   value: totalBookings ?? 0,           icon: CalendarDays, color: 'text-brand-green',  bg: 'bg-brand-green-light' },
     { label: 'Pending Review',   value: pendingCount ?? 0,             icon: Clock,        color: 'text-amber-600',    bg: 'bg-amber-50' },
-    { label: 'Total Revenue',    value: formatCurrency(totalRevenue),  icon: DollarSign,   color: 'text-emerald-600',  bg: 'bg-emerald-50' },
+    { label: 'Total Revenue',    value: formatRevenue(totalRevenue),   icon: DollarSign,   color: 'text-emerald-600',  bg: 'bg-emerald-50' },
     { label: 'Upcoming Events',  value: upcomingCount ?? 0,            icon: TrendingUp,   color: 'text-brand-gold',   bg: 'bg-brand-gold-light' },
   ]
 

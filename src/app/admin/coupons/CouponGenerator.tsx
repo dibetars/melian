@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
-import { Download, Copy, CheckCheck, RefreshCw } from 'lucide-react'
+import { useState, useRef, useCallback, useTransition } from 'react'
+import { Download, Copy, CheckCheck, RefreshCw, Save, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
+import { saveCoupon } from '@/actions/coupons'
 
 function randomCode() {
   const prefix = 'MELIAN'
@@ -20,7 +21,11 @@ export function CouponGenerator() {
   const [discountValue, setDiscountValue] = useState('10')
   const [description, setDescription] = useState('Valid on any space booking')
   const [expiry, setExpiry] = useState('')
+  const [maxUses, setMaxUses] = useState('')
   const [copied, setCopied] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle')
+  const [saveMessage, setSaveMessage] = useState('')
+  const [isSaving, startSaveTransition] = useTransition()
 
   const discountLabel =
     discountType === 'percent'
@@ -152,139 +157,201 @@ export function CouponGenerator() {
     }
   }
 
+  function handleSave() {
+    setSaveStatus('idle')
+    setSaveMessage('')
+    startSaveTransition(async () => {
+      const res = await saveCoupon({
+        code,
+        discount_type: discountType,
+        discount_value: Number(discountValue),
+        description,
+        expiry_date: expiry || undefined,
+        max_uses: maxUses ? Number(maxUses) : null,
+      })
+      if ('error' in res) {
+        setSaveStatus('error')
+        setSaveMessage(res.error ?? 'Failed to save.')
+      } else {
+        setSaveStatus('saved')
+        setSaveMessage('Coupon saved! Customers can now apply it at checkout.')
+        setTimeout(() => setSaveStatus('idle'), 4000)
+      }
+    })
+  }
+
   return (
-    <div className="grid gap-8 lg:grid-cols-2">
+    <div className="space-y-8">
+      <div className="grid gap-8 lg:grid-cols-2">
 
-      {/* Controls */}
-      <Card>
-        <CardContent className="space-y-5 pt-6">
-          {/* Code */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Coupon Code</label>
-            <div className="flex gap-2">
-              <input
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm uppercase outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCode(randomCode())}
-                title="Generate random code"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Discount type + value */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Discount</label>
-            <div className="flex gap-2">
-              <select
-                value={discountType}
-                onChange={(e) => setDiscountType(e.target.value as 'percent' | 'fixed')}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
-              >
-                <option value="percent">Percentage (%)</option>
-                <option value="fixed">Fixed (GHS)</option>
-              </select>
-              <input
-                type="number"
-                value={discountValue}
-                min={1}
-                max={discountType === 'percent' ? 100 : undefined}
-                onChange={(e) => setDiscountValue(e.target.value)}
-                className="w-28 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
-              />
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Description</label>
-            <input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Valid on any space booking"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
-            />
-          </div>
-
-          {/* Expiry */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Expiry Date <span className="text-gray-400">(optional)</span>
-            </label>
-            <input
-              type="date"
-              value={expiry}
-              onChange={(e) => setExpiry(e.target.value)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
-            />
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <Button onClick={handleDownload} className="flex-1 gap-2">
-              <Download className="h-4 w-4" /> Download PNG
-            </Button>
-            <Button variant="outline" onClick={handleCopyImage} className="flex-1 gap-2">
-              {copied
-                ? <><CheckCheck className="h-4 w-4 text-green-600" /> Copied!</>
-                : <><Copy className="h-4 w-4" /> Copy Image</>
-              }
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Live preview */}
-      <div>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Preview</p>
-        <div
-          ref={previewRef}
-          className="relative w-full overflow-hidden rounded-2xl shadow-xl"
-          style={{ background: '#1D2755', aspectRatio: '900/420' }}
-        >
-          {/* Gold edge accents */}
-          <div className="absolute inset-y-0 left-0 w-2.5 bg-brand-gold rounded-l-2xl" />
-          <div className="absolute inset-y-0 right-0 w-2.5 bg-brand-gold rounded-r-2xl" />
-
-          {/* Dashed divider */}
-          <div className="absolute inset-y-4 right-[35%] border-l border-dashed border-brand-gold/30" />
-          <span className="absolute top-2 right-[35%] -translate-x-1/2 text-brand-gold/40 text-lg">✂</span>
-
-          {/* Left content */}
-          <div className="absolute inset-y-0 left-6 right-[37%] flex flex-col justify-center gap-1 py-6">
-            <p className="font-serif text-3xl font-bold text-brand-gold leading-none">MELIAN</p>
-            <p className="text-[10px] tracking-[0.3em] text-white/50 uppercase">Event Centre</p>
-            <p className="mt-3 text-sm leading-relaxed text-white/80">{description}</p>
-            {expiry && (
-              <p className="mt-2 text-xs text-white/40">
-                Valid until {new Date(expiry).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </p>
-            )}
-          </div>
-
-          {/* Right content */}
-          <div className="absolute inset-y-0 right-0 left-[65%] flex flex-col items-center justify-center gap-3 px-4">
-            <p className="text-center font-bold text-brand-gold" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: 1 }}>
-              {discountLabel}
-            </p>
+        {/* Controls */}
+        <Card>
+          <CardContent className="space-y-5 pt-6">
+            {/* Code */}
             <div>
-              <p className="text-center text-[10px] uppercase tracking-widest text-white/50 mb-1">Use Code</p>
-              <div className="rounded-lg border border-brand-gold/50 bg-brand-gold/10 px-4 py-1.5 text-center font-mono text-sm font-bold text-brand-gold tracking-wider">
-                {code}
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">Coupon Code</label>
+              <div className="flex gap-2">
+                <input
+                  value={code}
+                  onChange={(e) => { setCode(e.target.value.toUpperCase()); setSaveStatus('idle') }}
+                  className="flex-1 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm uppercase outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setCode(randomCode()); setSaveStatus('idle') }}
+                  title="Generate random code"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-            <p className="text-[10px] text-white/30">melianevents.com</p>
+
+            {/* Discount type + value */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">Discount</label>
+              <div className="flex gap-2">
+                <select
+                  value={discountType}
+                  onChange={(e) => setDiscountType(e.target.value as 'percent' | 'fixed')}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+                >
+                  <option value="percent">Percentage (%)</option>
+                  <option value="fixed">Fixed (GHS)</option>
+                </select>
+                <input
+                  type="number"
+                  value={discountValue}
+                  min={1}
+                  max={discountType === 'percent' ? 100 : undefined}
+                  onChange={(e) => setDiscountValue(e.target.value)}
+                  className="w-28 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">Description</label>
+              <input
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Valid on any space booking"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+              />
+            </div>
+
+            {/* Expiry */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                Expiry Date <span className="text-gray-400">(optional)</span>
+              </label>
+              <input
+                type="date"
+                value={expiry}
+                onChange={(e) => setExpiry(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+              />
+            </div>
+
+            {/* Max uses */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                Max Uses <span className="text-gray-400">(optional — leave blank for unlimited)</span>
+              </label>
+              <input
+                type="number"
+                value={maxUses}
+                min={1}
+                onChange={(e) => setMaxUses(e.target.value)}
+                placeholder="e.g. 50"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-green focus:ring-2 focus:ring-brand-green/20"
+              />
+            </div>
+
+            {/* Save status */}
+            {saveStatus === 'saved' && (
+              <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 text-sm text-green-700">
+                ✓ {saveMessage}
+              </div>
+            )}
+            {saveStatus === 'error' && (
+              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" /> {saveMessage}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Button onClick={handleDownload} className="gap-2">
+                <Download className="h-4 w-4" /> Download
+              </Button>
+              <Button variant="outline" onClick={handleCopyImage} className="gap-2">
+                {copied
+                  ? <><CheckCheck className="h-4 w-4 text-green-600" /> Copied!</>
+                  : <><Copy className="h-4 w-4" /> Copy Image</>
+                }
+              </Button>
+              <Button
+                onClick={handleSave}
+                loading={isSaving}
+                className="col-span-2 gap-2 bg-brand-green hover:bg-brand-green-dark"
+              >
+                <Save className="h-4 w-4" /> Save to System
+              </Button>
+            </div>
+            <p className="text-center text-xs text-gray-400">
+              "Save to System" activates the code so customers can apply it at checkout.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Live preview */}
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Preview</p>
+          <div
+            ref={previewRef}
+            className="relative w-full overflow-hidden rounded-2xl shadow-xl"
+            style={{ background: '#1D2755', aspectRatio: '900/420' }}
+          >
+            {/* Gold edge accents */}
+            <div className="absolute inset-y-0 left-0 w-2.5 bg-brand-gold rounded-l-2xl" />
+            <div className="absolute inset-y-0 right-0 w-2.5 bg-brand-gold rounded-r-2xl" />
+
+            {/* Dashed divider */}
+            <div className="absolute inset-y-4 right-[35%] border-l border-dashed border-brand-gold/30" />
+            <span className="absolute top-2 right-[35%] -translate-x-1/2 text-brand-gold/40 text-lg">✂</span>
+
+            {/* Left content */}
+            <div className="absolute inset-y-0 left-6 right-[37%] flex flex-col justify-center gap-1 py-6">
+              <p className="font-serif text-3xl font-bold text-brand-gold leading-none">MELIAN</p>
+              <p className="text-[10px] tracking-[0.3em] text-white/50 uppercase">Event Centre</p>
+              <p className="mt-3 text-sm leading-relaxed text-white/80">{description}</p>
+              {expiry && (
+                <p className="mt-2 text-xs text-white/40">
+                  Valid until {new Date(expiry).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              )}
+            </div>
+
+            {/* Right content */}
+            <div className="absolute inset-y-0 right-0 left-[65%] flex flex-col items-center justify-center gap-3 px-4">
+              <p className="text-center font-bold text-brand-gold" style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: 1 }}>
+                {discountLabel}
+              </p>
+              <div>
+                <p className="text-center text-[10px] uppercase tracking-widest text-white/50 mb-1">Use Code</p>
+                <div className="rounded-lg border border-brand-gold/50 bg-brand-gold/10 px-4 py-1.5 text-center font-mono text-sm font-bold text-brand-gold tracking-wider">
+                  {code}
+                </div>
+              </div>
+              <p className="text-[10px] text-white/30">melianevents.com</p>
+            </div>
           </div>
+          <p className="mt-2 text-center text-xs text-gray-400">
+            Live preview · Download exports a high-res PNG
+          </p>
         </div>
-        <p className="mt-2 text-center text-xs text-gray-400">
-          Live preview · Download exports a high-res PNG
-        </p>
       </div>
 
       <canvas ref={canvasRef} className="hidden" />
