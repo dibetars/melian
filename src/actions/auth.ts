@@ -37,8 +37,16 @@ export async function signIn(_prevState: AuthState, formData: FormData): Promise
 
   if (error) return { error: error.message }
 
+  // Check role — send admins to /admin, everyone else to next or /dashboard
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user!.id)
+    .single()
+
   revalidatePath('/', 'layout')
-  redirect(next)
+  redirect(profile?.role === 'admin' ? '/admin' : next)
 }
 
 export async function signOut() {

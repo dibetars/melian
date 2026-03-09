@@ -14,10 +14,6 @@ interface NavbarProps {
   isAdmin?: boolean
 }
 
-const leftLinks = [
-  { href: '/venues', label: 'Our Spaces' },
-]
-
 export function Navbar({ user, isAdmin }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -39,12 +35,8 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur shadow-sm">
       <nav className="mx-auto grid max-w-7xl grid-cols-3 items-center px-4 py-3 sm:px-6 lg:px-8">
-        {/* Left — nav links */}
-        <div className="hidden items-center gap-8 md:flex">
-          {leftLinks.map(({ href, label }) => (
-            <Link key={href} href={href} className={linkCls(href)}>{label}</Link>
-          ))}
-        </div>
+        {/* Left — empty spacer for centered logo */}
+        <div />
 
         {/* Center — logo */}
         <Link href="/" className="flex items-center justify-center">
@@ -99,19 +91,7 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="border-t border-gray-100 bg-white px-4 pb-5 md:hidden">
-          <div className="space-y-3 pt-3">
-            {leftLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className="block text-xs font-semibold uppercase tracking-widest text-gray-600"
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-          <div className="mt-4 flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             {user ? (
               <>
                 <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
