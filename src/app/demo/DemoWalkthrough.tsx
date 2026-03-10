@@ -316,14 +316,6 @@ function HeroSlide({ stats }: { stats: Stats }) {
         ))}
       </div>
 
-      {/* Stack */}
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        {['Next.js 15', 'Supabase', 'Paystack', 'Tailwind CSS', 'TypeScript'].map((t) => (
-          <span key={t} className="rounded-full border border-white/[0.08] bg-white/[0.05] px-3 py-1 text-xs text-white/40">
-            {t}
-          </span>
-        ))}
-      </div>
     </div>
   )
 }
