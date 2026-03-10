@@ -29,11 +29,11 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
   const linkCls = (href: string) =>
     cn(
       'text-xs font-semibold uppercase tracking-widest transition-colors',
-      pathname.startsWith(href) ? 'text-brand-gold' : 'text-gray-500 hover:text-brand-green'
+      pathname.startsWith(href) ? 'text-brand-gold' : 'text-white hover:text-brand-gold'
     )
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur shadow-sm">
+    <header className="sticky top-0 z-40 border-b border-gray-100 bg-brand-green/95 backdrop-blur shadow-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         {/* Left — logo */}
         <Link href="/" className="flex items-center">
@@ -62,13 +62,13 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
               ) : (
                 <Link href="/dashboard" className={linkCls('/dashboard')}>Dashboard</Link>
               )}
-              <Button variant="outline" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
+              <Button variant="primary" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
                 Sign Out
               </Button>
             </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-xs font-semibold uppercase tracking-widest text-gray-500 hover:text-brand-green transition-colors">
+              <Link href="/auth/login" className="text-xs font-semibold uppercase tracking-widest text-white hover:text-brand-gold transition-colors">
                 Login
               </Link>
               <Link href="/auth/register">
@@ -81,14 +81,14 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
         {/* Mobile hamburger */}
         <div className="flex md:hidden">
           <button onClick={() => setMenuOpen(!menuOpen)}>
-            {menuOpen ? <X className="h-6 w-6 text-brand-green" /> : <Menu className="h-6 w-6 text-brand-green" />}
+            {menuOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
           </button>
         </div>
       </nav>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="border-t border-gray-100 bg-white px-4 pb-5 md:hidden">
+        <div className="border-t border-gray-100 bg-brand-green px-4 pb-5 md:hidden">
           <div className="flex flex-col gap-2 pt-3">
             {user ? (
               <>
@@ -101,7 +101,7 @@ export function Navbar({ user, isAdmin }: NavbarProps) {
                     <Button variant="outline" size="sm" className="w-full text-xs uppercase tracking-widest">Dashboard</Button>
                   </Link>
                 )}
-                <Button variant="secondary" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
+                <Button variant="primary" size="sm" className="text-xs uppercase tracking-widest" onClick={handleSignOut}>
                   Sign Out
                 </Button>
               </>

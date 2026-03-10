@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { BookingStatusBadge } from '@/components/bookings/BookingStatusBadge'
 import { CancelBookingButton } from './CancelBookingButton'
+import { BankDetails } from '@/components/bookings/BankDetails'
 import { formatCurrency, formatDate, formatTime, generateBookingRef } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Booking Details' }
@@ -102,6 +103,11 @@ export default async function BookingDetailPage({ params }: Props) {
 
       {booking.status === 'pending' && (
         <CancelBookingButton bookingId={booking.id} />
+      )}
+
+      {/* Bank Transfer Details for Offline Payments */}
+      {booking.payment?.method === 'offline' && booking.payment?.status === 'pending' && (
+        <BankDetails bookingRef={generateBookingRef(booking.id)} />
       )}
     </div>
   )

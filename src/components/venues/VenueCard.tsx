@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Users, Clock } from 'lucide-react'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, getVenueImage } from '@/lib/utils'
 import type { Venue } from '@/types'
 
 export function VenueCard({ venue }: { venue: Venue }) {
-  const thumb = venue.images[0]
+  const thumb = getVenueImage(venue)
 
   return (
     <Link href={`/venues/${venue.slug}`} className="group block">
